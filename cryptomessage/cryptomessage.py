@@ -88,6 +88,8 @@ class CryptoMessengerPro:
                   command=self.setup_wizard, style='Accent.TButton').pack(fill=tk.X, pady=2)
         ttk.Button(actions_frame, text="👥 Gestisci Contatti", 
                   command=self.manage_contacts).pack(fill=tk.X, pady=2)
+        ttk.Button(actions_frame, text="📤 Esporta Chiavi", 
+                  command=self.export_keys_menu).pack(fill=tk.X, pady=2)
         ttk.Button(actions_frame, text="❓ Tutorial", 
                   command=self.show_welcome_tutorial).pack(fill=tk.X, pady=2)
         
@@ -480,6 +482,157 @@ Scegli un'opzione:
                               f"📁 {file_path}\n\n"
                               f"Invia questo file ai tuoi contatti per permettergli "
                               f"di inviarti messaggi criptati.")
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore nell'esportazione:\n{str(e)}")
+    
+    def export_keys_menu(self):
+        """Menu per esportare chiavi"""
+        if not self.public_key:
+            messagebox.showwarning("Attenzione", "Nessun account configurato!\n\nConfigura prima il tuo account.")
+            return
+        
+        export_win = tk.Toplevel(self.root)
+        export_win.title("Esporta Chiavi")
+        export_win.geometry("550x400")
+        export_win.configure(bg="#f8f9fa")
+        export_win.transient(self.root)
+        export_win.grab_set()
+        
+        tk.Label(export_win, text="📤 Esporta le Tue Chiavi", bg="#f8f9fa", fg="#2c3e50",
+                font=('Segoe UI', 18, 'bold')).pack(pady=25)
+        
+        info = """
+Scegli quale chiave vuoi esportare:
+
+🔓 CHIAVE PUBBLICA
+   • Condividila liberamente con i tuoi contatti
+   • Serve loro per inviarti messaggi criptati
+   • È sicuro condividerla via email, chat, ecc.
+
+🔐 CHIAVE PRIVATA
+   • NON condividerla MAI con nessuno!
+   • Esportala solo per fare un backup sicuro
+   • Conservala in un posto molto sicuro
+   • Chi la possiede può leggere i tuoi messaggi!
+        """
+        
+        tk.Label(export_win, text=info, bg="#f8f9fa", fg="#2c3e50",
+                font=('Segoe UI', 11), justify=tk.LEFT).pack(padx=35, pady=15)
+        
+        btn_frame = tk.Frame(export_win, bg="#f8f9fa")
+        btn_frame.pack(pady=25)
+        
+        ttk.Button(btn_frame, text="🔓 Esporta Chiave Pubblica", 
+                  command=lambda: [export_win.destroy(), self.export_public_key()]).pack(pady=10, fill=tk.X)
+        ttk.Button(btn_frame, text="🔐 Esporta Chiave Privata (Backup)", 
+                  command=lambda: [export_win.destroy(), self.export_private_key()]).pack(pady=10, fill=tk.X)
+        ttk.Button(btn_frame, text="Annulla", 
+                  command=export_win.destroy).pack(pady=10)
+    
+    def export_private_key(self):
+        """Esporta chiave privata con avvertenze di sicurezza"""
+        if not self.public_key:
+            messagebox.showwarning("Attenzione", "Nessuna chiave da esportare!")
+            return
+        
+        # Avvertenza di sicurezza
+        warning = messagebox.askokcancel(
+            "⚠️ ATTENZIONE - OPERAZIONE SENSIBILE",
+            "Stai per esportare la tua CHIAVE PRIVATA!\n\n"
+            "⚠️ PERICOLI:\n"
+            "• Chi possiede questa chiave può leggere TUTTI i tuoi messaggi\n"
+            "• NON inviarla MAI via email, chat o cloud non sicuri\n"
+            "• Conservala solo su dispositivi sicuri e criptati\n\n"
+            "✅ USI LEGITTIMI:\n"
+            "• Backup sicuro su chiavetta USB criptata\n"
+            "• Trasferimento su altro tuo dispositivo (con cautela)\n"
+            "• Conservazione in cassaforte fisica\n\n"
+            "Vuoi procedere con l'esportazione?"
+        )
+        
+        if not warning:
+            return
+        
+        # Richiede password per conferma
+        if not self.load_private_key_with_password():
+            return
+        
+        file_path = filedialog.asksaveasfilename(
+            title="Salva la tua chiave privata (TIENILA SEGRETA!)",
+            defaultextension=".pem",
+            filetypes=[("File PEM", "*.pem")],
+            initialfile="mia_chiave_PRIVATA_backup.pem"
+        )
+        
+        if not file_path:
+            return
+        
+        # Chiede se proteggere con password
+        protect = messagebox.askyesno(
+            "Protezione Password",
+            "Vuoi proteggere la chiave privata esportata con una password?\n\n"
+            "RACCOMANDATO: Scegli 'Sì' per maggiore sicurezza"
+        )
+        
+        try:
+            if protect:
+                export_password = simpledialog.askstring(
+                    "Password Esportazione", 
+                    "Crea una password per proteggere il file esportato:\n\n"
+                    "(Può essere diversa dalla password del tuo account)",
+                    show='*'
+                )
+                
+                if not export_password:
+                    messagebox.showinfo("Annullato", "Esportazione annullata.")
+                    return
+                
+                export_password_confirm = simpledialog.askstring(
+                    "Conferma Password", 
+                    "Conferma la password:",
+                    show='*'
+                )
+                
+                if export_password != export_password_confirm:
+                    messagebox.showerror("Errore", "Le password non corrispondono!")
+                    return
+                
+                # Esporta con password
+                private_pem = self.private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.BestAvailableEncryption(export_password.encode())
+                )
+            else:
+                # Esporta senza password (NON RACCOMANDATO)
+                messagebox.showwarning(
+                    "Attenzione",
+                    "⚠️ Stai esportando la chiave SENZA protezione password!\n\n"
+                    "Chiunque acceda al file potrà leggere i tuoi messaggi!"
+                )
+                
+                private_pem = self.private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.PKCS8,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            
+            # Salva file
+            with open(file_path, 'wb') as f:
+                f.write(private_pem)
+            
+            messagebox.showinfo(
+                "✅ Chiave Privata Esportata", 
+                f"Chiave privata salvata con successo!\n\n"
+                f"📁 {file_path}\n\n"
+                f"🔐 Protetta con password: {'SÌ ✅' if protect else 'NO ⚠️'}\n\n"
+                f"⚠️ IMPORTANTE:\n"
+                f"• Conserva questo file in un luogo MOLTO sicuro\n"
+                f"• NON condividerlo con nessuno\n"
+                f"• NON caricarlo su cloud non sicuri\n"
+                f"• Considera di salvarlo su USB criptata"
+            )
+        
         except Exception as e:
             messagebox.showerror("Errore", f"Errore nell'esportazione:\n{str(e)}")
     
