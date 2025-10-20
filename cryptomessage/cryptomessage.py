@@ -14,7 +14,7 @@ class CryptoMessengerPro:
     def __init__(self, root):
         self.root = root
         self.root.title("CryptoMessenger Pro - Privacy Semplice e Sicura")
-        self.root.geometry("900x750")
+        self.root.geometry("800x600")
         self.root.configure(bg="#f8f9fa")
         
         # Dati applicazione
@@ -36,14 +36,23 @@ class CryptoMessengerPro:
         # Stile moderno flat
         style = ttk.Style()
         style.theme_use('clam')
-        style.configure('TButton', padding=12, font=('Segoe UI', 10), borderwidth=1, relief='flat')
-        style.configure('Accent.TButton', background="#007bff", foreground="white")
+        style.configure('TButton', padding=(8, 4), font=('Segoe UI', 9), borderwidth=1, relief='flat')
+        style.configure('Accent.TButton', 
+                       background="#007bff", 
+                       foreground="white",
+                       padding=(8, 4),
+                       font=('Segoe UI', 9),
+                       borderwidth=1,
+                       relief='flat')
+        style.map('Accent.TButton',
+                 background=[('active', '#0056b3'),
+                           ('pressed', '#004085')])
         style.configure('TLabel', background="#f8f9fa", foreground="#2c3e50", font=('Segoe UI', 10))
         style.configure('Title.TLabel', font=('Segoe UI', 20, 'bold'), foreground="#2c3e50")
         style.configure('Subtitle.TLabel', font=('Segoe UI', 10), foreground="#6c757d")
         
         # Header elegante
-        header = tk.Frame(self.root, bg="#ffffff", pady=25, relief='flat', bd=0)
+        header = tk.Frame(self.root, bg="#ffffff", pady=15, relief='flat', bd=0)
         header.pack(fill=tk.X)
         
         title = ttk.Label(header, text="🔐 CryptoMessenger Pro", 
@@ -56,17 +65,17 @@ class CryptoMessengerPro:
         
         # Container principale
         main_container = tk.Frame(self.root, bg="#f8f9fa")
-        main_container.pack(fill=tk.BOTH, expand=True, padx=25, pady=20)
+        main_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=10)
         
         # Sezione Status e Azioni Rapide
         top_section = tk.Frame(main_container, bg="#f8f9fa")
-        top_section.pack(fill=tk.X, pady=(0, 20))
+        top_section.pack(fill=tk.X, pady=(0, 10))
         
         # Status
         status_frame = tk.LabelFrame(top_section, text=" 📊 Il Tuo Account ", 
-                                     bg="#ffffff", fg="#2c3e50", font=('Segoe UI', 11, 'bold'),
-                                     padx=20, pady=15, relief='flat', bd=1)
-        status_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 15))
+                                     bg="#ffffff", fg="#2c3e50", font=('Segoe UI', 10, 'bold'),
+                                     padx=10, pady=8, relief='flat', bd=1)
+        status_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 8))
         
         self.status_label = ttk.Label(status_frame, text="⚠️ Account non configurato", 
                                       background="#ffffff", foreground="#dc3545",
@@ -80,18 +89,25 @@ class CryptoMessengerPro:
         
         # Azioni rapide
         actions_frame = tk.LabelFrame(top_section, text=" ⚡ Azioni Rapide ", 
-                                      bg="#ffffff", fg="#2c3e50", font=('Segoe UI', 11, 'bold'),
-                                      padx=20, pady=15, relief='flat', bd=1)
-        actions_frame.pack(side=tk.LEFT, fill=tk.BOTH)
+                                      bg="#ffffff", fg="#2c3e50", font=('Segoe UI', 10, 'bold'),
+                                      padx=10, pady=8, relief='flat', bd=1)
+        actions_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=(8, 0))
+        
+        # Configura dimensioni minime per i pulsanti
+        button_width = 15
         
         ttk.Button(actions_frame, text="🔑 Configura Account", 
-                  command=self.setup_wizard, style='Accent.TButton').pack(fill=tk.X, pady=2)
+                  command=self.setup_wizard, style='Accent.TButton',
+                  width=button_width).pack(fill=tk.X, pady=2, ipady=2)
         ttk.Button(actions_frame, text="👥 Gestisci Contatti", 
-                  command=self.manage_contacts).pack(fill=tk.X, pady=2)
+                  command=self.manage_contacts,
+                  width=button_width).pack(fill=tk.X, pady=2, ipady=2)
         ttk.Button(actions_frame, text="📤 Esporta Chiavi", 
-                  command=self.export_keys_menu).pack(fill=tk.X, pady=2)
+                  command=self.export_keys_menu,
+                  width=button_width).pack(fill=tk.X, pady=2, ipady=2)
         ttk.Button(actions_frame, text="❓ Tutorial", 
-                  command=self.show_welcome_tutorial).pack(fill=tk.X, pady=2)
+                  command=self.show_welcome_tutorial,
+                  width=button_width).pack(fill=tk.X, pady=2, ipady=2)
         
         # Notebook principale
         notebook = ttk.Notebook(main_container)
@@ -117,19 +133,24 @@ class CryptoMessengerPro:
         ttk.Button(dest_frame, text="➕ Nuovo Contatto", 
                   command=self.add_contact_quick).pack(side=tk.LEFT)
         
+        # Pulsante CRIPTA E COPIA - SPOSTATO IN ALTO PER MAGGIORE VISIBILITÀ
+        ttk.Button(encrypt_frame, text="🔒 CRIPTA E COPIA", 
+                  command=self.encrypt_message_enhanced,
+                  style='Accent.TButton').pack(pady=8, ipady=4)
+        
         # Area messaggio
         tk.Label(encrypt_frame, text="Il tuo messaggio:", 
-                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 11, 'bold')).pack(anchor=tk.W, pady=(20, 8))
+                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 11, 'bold')).pack(anchor=tk.W, pady=(10, 8))
         
-        self.plain_text = scrolledtext.ScrolledText(encrypt_frame, height=10, 
-                                                    font=('Segoe UI', 11), wrap=tk.WORD,
+        self.plain_text = scrolledtext.ScrolledText(encrypt_frame, height=6, 
+                                                    font=('Segoe UI', 10), wrap=tk.WORD,
                                                     bg="#ffffff", fg="#2c3e50", insertbackground="#2c3e50",
                                                     relief='flat', bd=1)
-        self.plain_text.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+        self.plain_text.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         
         # Opzioni crittografia
         options_frame = tk.Frame(encrypt_frame, bg="#f8f9fa")
-        options_frame.pack(fill=tk.X, pady=(0, 15))
+        options_frame.pack(fill=tk.X, pady=(0, 8))
         
         self.sign_var = tk.BooleanVar(value=True)
         tk.Checkbutton(options_frame, text="✍️ Firma digitalmente (raccomandato)", 
@@ -143,50 +164,46 @@ class CryptoMessengerPro:
         
         self.plain_text.bind('<KeyRelease>', self.update_char_count)
         
-        ttk.Button(encrypt_frame, text="🔒 CRIPTA E COPIA", 
-                  command=self.encrypt_message_enhanced,
-                  style='Accent.TButton').pack(pady=5)
-        
         tk.Label(encrypt_frame, text="Messaggio criptato (pronto per essere inviato):", 
                 bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 11, 'bold')).pack(anchor=tk.W, pady=(20, 8))
         
-        self.encrypted_text = scrolledtext.ScrolledText(encrypt_frame, height=8, 
-                                                       font=('Consolas', 10), wrap=tk.WORD,
+        self.encrypted_text = scrolledtext.ScrolledText(encrypt_frame, height=6, 
+                                                       font=('Consolas', 9), wrap=tk.WORD,
                                                        bg="#ffffff", fg="#495057", relief='flat', bd=1)
-        self.encrypted_text.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+        self.encrypted_text.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         
         # === TAB DECRIPTA ===
         decrypt_frame = tk.Frame(notebook, bg="#f8f9fa")
         notebook.add(decrypt_frame, text="🔓 Leggi Messaggio Ricevuto")
         
         tk.Label(decrypt_frame, text="Incolla qui il messaggio criptato che hai ricevuto:", 
-                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 11, 'bold')).pack(anchor=tk.W, pady=(20, 8))
+                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 10, 'bold')).pack(anchor=tk.W, pady=(15, 8))
         
         input_frame = tk.Frame(decrypt_frame, bg="#f8f9fa")
-        input_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+        input_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         
-        self.encrypted_input = scrolledtext.ScrolledText(input_frame, height=10, 
-                                                        font=('Consolas', 10), wrap=tk.WORD,
+        self.encrypted_input = scrolledtext.ScrolledText(input_frame, height=8, 
+                                                        font=('Consolas', 9), wrap=tk.WORD,
                                                         bg="#ffffff", fg="#495057", 
                                                         insertbackground="#495057", relief='flat', bd=1)
         self.encrypted_input.pack(fill=tk.BOTH, expand=True)
         
         buttons_frame = tk.Frame(decrypt_frame, bg="#f8f9fa")
-        buttons_frame.pack(fill=tk.X, pady=(0, 15))
+        buttons_frame.pack(fill=tk.X, pady=(0, 8))
         
         ttk.Button(buttons_frame, text="📋 Incolla dagli Appunti", 
-                  command=self.paste_from_clipboard).pack(side=tk.LEFT, padx=(0, 10))
+                  command=self.paste_from_clipboard).pack(side=tk.LEFT, padx=(0, 8), ipady=2)
         ttk.Button(buttons_frame, text="🔓 DECRIPTA", 
                   command=self.decrypt_message_enhanced,
-                  style='Accent.TButton').pack(side=tk.LEFT)
+                  style='Accent.TButton').pack(side=tk.LEFT, ipady=2)
         
         tk.Label(decrypt_frame, text="Messaggio decriptato:", 
-                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 11, 'bold')).pack(anchor=tk.W, pady=(20, 8))
+                bg="#f8f9fa", fg="#2c3e50", font=('Segoe UI', 10, 'bold')).pack(anchor=tk.W, pady=(15, 8))
         
-        self.decrypted_text = scrolledtext.ScrolledText(decrypt_frame, height=10, 
-                                                       font=('Segoe UI', 11), wrap=tk.WORD,
+        self.decrypted_text = scrolledtext.ScrolledText(decrypt_frame, height=6, 
+                                                       font=('Segoe UI', 10), wrap=tk.WORD,
                                                        bg="#d4edda", fg="#155724", relief='flat', bd=1)
-        self.decrypted_text.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        self.decrypted_text.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         
         self.decrypt_info = ttk.Label(decrypt_frame, text="", 
                                       background="#f8f9fa", foreground="#6c757d",

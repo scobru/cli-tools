@@ -30,6 +30,20 @@ def add_task(description):
     save_tasks(tasks)
     print(f"✅ Aggiunto compito: '{description}'")
 
+def delete_task(task_number):
+    """Elimina un compito dalla lista."""
+    tasks = load_tasks()
+    task_index = task_number - 1
+    if 0 <= task_index < len(tasks):
+        # Salva la descrizione prima di eliminare il compito
+        task_description = tasks[task_index]['description']
+        del tasks[task_index]
+        save_tasks(tasks)
+        print(f"✅ Compito eliminato: '{task_description}'")
+    else:
+        print(f"❌ Errore: Non esiste un compito con il numero {task_number}.")
+
+
 def list_tasks():
     """Mostra tutti i compiti presenti nella lista."""
     tasks = load_tasks()
@@ -67,6 +81,11 @@ def main():
     parser_add = subparsers.add_parser("add", help="Aggiunge un nuovo compito.")
     parser_add.add_argument("description", type=str, help="La descrizione del compito.")
     parser_add.set_defaults(func=lambda args: add_task(args.description))
+
+    # Comando 'delete'
+    parser_delete = subparsers.add_parser("delete", help="Elimina un compito dalla lista.")
+    parser_delete.add_argument("task_number", type=int, help="Il numero del compito da eliminare.")
+    parser_delete.set_defaults(func=lambda args: delete_task(args.task_number))
 
     # Comando 'list'
     parser_list = subparsers.add_parser("list", help="Mostra tutti i compiti.")

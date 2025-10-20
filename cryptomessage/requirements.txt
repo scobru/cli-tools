@@ -1,17 +1,1 @@
-# Dipendenze Base (Obbligatorie)
-Flask>=2.3.0
-requests>=2.31.0
-
-# Dipendenze Opzionali (per funzionalità avanzate)
-# Installa con: pip install -r requirements.txt
-
-# Per firme digitali ECDSA (autenticazione transazioni)
-ecdsa>=0.18.0
-
-# Per notifiche real-time WebSocket
-flask-socketio>=5.3.0
-python-socketio>=5.9.0
-
-# Per CORS (se accedi da domini diversi)
-flask-cors>=4.0.0
-
+cryptography>=41.0.0
