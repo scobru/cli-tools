@@ -43,8 +43,19 @@ def organizza_cartella():
                 print(f"✅ Creata la cartella '{extension}'")
 
             # --- PASSO 5: Spostare il file ---
-            shutil.move(file_path, dest_folder_path)
-            print(f"Spostato '{filename}' in '{extension}/'")
+            dest_file_path = os.path.join(dest_folder_path, filename)
+            
+            # Se il file di destinazione esiste già, aggiungi un numero progressivo
+            counter = 1
+            original_name, original_ext = os.path.splitext(filename)
+            while os.path.exists(dest_file_path):
+                new_filename = f"{original_name}_{counter}{original_ext}"
+                dest_file_path = os.path.join(dest_folder_path, new_filename)
+                counter += 1
+            
+            shutil.move(file_path, dest_file_path)
+            final_filename = os.path.basename(dest_file_path)
+            print(f"Spostato '{filename}' in '{extension}/{final_filename}'")
             
         print("\n🎉 Organizzazione completata!")
 
