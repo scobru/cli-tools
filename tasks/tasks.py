@@ -1,103 +1,73 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import argparse
 import json
-from pathlib import Path
+import os
+from datetime import datetime
 
-# Definiamo il file dove verranno salvati i compiti
-TASKS_FILE = Path.home() / '.tasks.json'
+TASKS_FILE = "tasks.json"
 
 def load_tasks():
-    """Carica i compiti dal file JSON. Se il file non esiste, lo crea."""
-    if not TASKS_FILE.exists():
-        return []
-    with open(TASKS_FILE, 'r') as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return [] # Ritorna una lista vuota se il file è corrotto o vuoto
+    if os.path.exists(TASKS_FILE):
+        with open(TASKS_FILE, "r") as file:
+            return json.load(file)
+    return []
 
 def save_tasks(tasks):
-    """Salva la lista aggiornata dei compiti nel file JSON."""
-    with open(TASKS_FILE, 'w') as f:
-        json.dump(tasks, f, indent=4)
+    with open(TASKS_FILE, "w") as file:
+        json.dump(tasks, file, indent=2)
 
-def add_task(description):
-    """Aggiunge un nuovo compito alla lista."""
-    tasks = load_tasks()
-    tasks.append({"description": description, "done": False})
+def add_task(tasks, title, description, due_date):
+    task = {"title": title, "description": description, "due_date": due_date, "completed": False}
+    tasks.append(task)
     save_tasks(tasks)
-    print(f"✅ Aggiunto compito: '{description}'")
+    print("Task added successfully!")
 
-def delete_task(task_number):
-    """Elimina un compito dalla lista."""
-    tasks = load_tasks()
-    task_index = task_number - 1
-    if 0 <= task_index < len(tasks):
-        # Salva la descrizione prima di eliminare il compito
-        task_description = tasks[task_index]['description']
-        del tasks[task_index]
+def list_tasks(tasks):
+    for index, task in enumerate(tasks, start=1):
+        print(f"{index}. {task['title']} - Due: {task['due_date']} - {'Completed' if task['completed'] else 'Incomplete'}")
+
+def update_task(tasks, index, title, description, due_date):
+    if 0 < index <= len(tasks):
+        task = tasks[index - 1]
+        task["title"] = title
+        task["description"] = description
+        task["due_date"] = due_date
         save_tasks(tasks)
-        print(f"✅ Compito eliminato: '{task_description}'")
+        print("Task updated successfully!")
     else:
-        print(f"❌ Errore: Non esiste un compito con il numero {task_number}.")
+        print("Invalid task index.")
 
-
-def list_tasks():
-    """Mostra tutti i compiti presenti nella lista."""
-    tasks = load_tasks()
-    if not tasks:
-        print("🎉 Nessun compito in lista. Goditi il tempo libero!")
-        return
-
-    print("--- La Tua To-Do List ---")
-    for i, task in enumerate(tasks):
-        status = "✅" if task["done"] else "🔲"
-        print(f"{i + 1}. {status} {task['description']}")
-
-def complete_task(task_number):
-    """Segna un compito come completato."""
-    tasks = load_tasks()
-    # L'utente vede i numeri da 1 in poi, ma la lista in Python parte da 0
-    task_index = task_number - 1
-
-    if 0 <= task_index < len(tasks):
-        if tasks[task_index]["done"]:
-            print(f"👍 Il compito '{tasks[task_index]['description']}' era già completato.")
-        else:
-            tasks[task_index]["done"] = True
-            save_tasks(tasks)
-            print(f"🎉 Completato: '{tasks[task_index]['description']}'")
-    else:
-        print(f"❌ Errore: Non esiste un compito con il numero {task_number}.")
-
+# Add other functions for deleting, searching, marking as complete, etc.
 
 def main():
-    parser = argparse.ArgumentParser(description="Un semplice gestore di to-do list da terminale.")
-    subparsers = parser.add_subparsers(dest="command", required=True, help="Comandi disponibili")
+    tasks = load_tasks()
 
-    # Comando 'add'
-    parser_add = subparsers.add_parser("add", help="Aggiunge un nuovo compito.")
-    parser_add.add_argument("description", type=str, help="La descrizione del compito.")
-    parser_add.set_defaults(func=lambda args: add_task(args.description))
+    while True:
+        print("\nTask Manager Menu:")
+        print("1. Add Task")
+        print("2. List Tasks")
+        print("3. Update Task")
+        print("4. Quit")
 
-    # Comando 'delete'
-    parser_delete = subparsers.add_parser("delete", help="Elimina un compito dalla lista.")
-    parser_delete.add_argument("task_number", type=int, help="Il numero del compito da eliminare.")
-    parser_delete.set_defaults(func=lambda args: delete_task(args.task_number))
+        choice = input("Enter your choice (1-4): ")
 
-    # Comando 'list'
-    parser_list = subparsers.add_parser("list", help="Mostra tutti i compiti.")
-    parser_list.set_defaults(func=lambda args: list_tasks())
-
-    # Comando 'done'
-    parser_done = subparsers.add_parser("done", help="Segna un compito come completato.")
-    parser_done.add_argument("task_number", type=int, help="Il numero del compito da completare.")
-    parser_done.set_defaults(func=lambda args: complete_task(args.task_number))
-
-    args = parser.parse_args()
-    args.func(args)
+        if choice == "1":
+            title = input("Enter task title: ")
+            description = input("Enter task description: ")
+            due_date = input("Enter due date (YYYY-MM-DD): ")
+            add_task(tasks, title, description, due_date)
+        elif choice == "2":
+            list_tasks(tasks)
+        elif choice == "3":
+            list_tasks(tasks)
+            index = int(input("Enter the index of the task to update: "))
+            title = input("Enter new task title: ")
+            description = input("Enter new task description: ")
+            due_date = input("Enter new due date (YYYY-MM-DD): ")
+            update_task(tasks, index, title, description, due_date)
+        elif choice == "4":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please enter a number between 1 and 4.")
 
 if __name__ == "__main__":
     main()
