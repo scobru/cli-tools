@@ -5,12 +5,14 @@ Una raccolta di strumenti Python da riga di comando per aumentare la produttivit
 ## 📋 Indice
 
 - [clip](#-clip---clipboard-manager) - Gestore clipboard avanzato
+- [cryptoclip](#-cryptoclip---clipboard-encryption) - Clipboard monitor e crittografia Fernet
 - [cryptomessage](#-cryptomessage---encrypted-messaging) - Messaggistica crittografata end-to-end
-- [editor](#-editor---terminal-text-editor) - Editor di testo per terminale
 - [foldx](#-foldx---folder-organizer) - Organizzatore automatico di cartelle
 - [meteocheck](#-meteocheck---weather-checker) - Controllore meteo da terminale
 - [opass](#-opass---organic-password-generator) - Generatore di password organiche
 - [tasks](#-tasks---todo-list-manager) - Gestore di task da terminale
+
+- [cryptoclip](#-cryptoclip---clipboard-encryption)
 
 ---
 
@@ -50,6 +52,36 @@ python clip.py clear
 - ✅ Salvataggio rapido da clipboard
 - ✅ Salvataggio diretto di testo
 - ✅ Gestione multi-elemento
+
+---
+
+## 🔐 cryptoclip - Clipboard Encryption
+
+Crittografia e decrittografia automatica o manuale del contenuto della clipboard tramite Fernet (compatibile con la versione Rust).
+
+### Installazione
+```bash
+cd cryptoclip
+pip install -r requirements.txt
+```
+
+### Utilizzo
+```bash
+# Avvio del monitor e del listener in background (con tray icon)
+python cryptoclip.py
+
+# Specifica una chiave personalizzata
+python cryptoclip.py -k "LaTuaChiaveFernetBase64..."
+
+# Genera una chiave al volo ed esci
+python cryptoclip.py --generate-key
+```
+
+### Caratteristiche
+- ✅ Monitor in background con auto-decriptazione
+- ✅ Hotkeys globali: `Ctrl+Shift+E` (cifra), `Ctrl+Shift+D` (decifra), `Ctrl+Shift+K` (nuova chiave), `Ctrl+Shift+I` (carica chiave)
+- ✅ System Tray Icon con menu rapido
+- ✅ Fallback automatico in modalità headless/console se la GUI non è disponibile
 
 ---
 
