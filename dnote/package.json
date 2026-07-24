@@ -1,0 +1,26 @@
+{
+  "name": "dnote-cli",
+  "version": "1.0.0",
+  "description": "Developer notebook CLI with Zen sync (delay.scobrudot.dev)",
+  "type": "module",
+  "main": "dnote.js",
+  "bin": {
+    "dnote": "./dnote.js"
+  },
+  "scripts": {
+    "start": "node dnote.js"
+  },
+  "dependencies": {
+    "@akaoio/zen": "file:../../zen"
+  },
+  "keywords": [
+    "dnote",
+    "notes",
+    "cli",
+    "zen",
+    "sync",
+    "offline-first"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -7,12 +7,9 @@ Una raccolta di strumenti Python da riga di comando per aumentare la produttivit
 - [clip](#-clip---clipboard-manager) - Gestore clipboard avanzato
 - [cryptoclip](#-cryptoclip---clipboard-encryption) - Clipboard monitor e crittografia Fernet
 - [cryptomessage](#-cryptomessage---encrypted-messaging) - Messaggistica crittografata end-to-end
+- [dnote](#-dnote---zen-powered-developer-notebook) - Developer notebook con sync Zen relay
 - [foldx](#-foldx---folder-organizer) - Organizzatore automatico di cartelle
-- [meteocheck](#-meteocheck---weather-checker) - Controllore meteo da terminale
 - [opass](#-opass---organic-password-generator) - Generatore di password organiche
-- [tasks](#-tasks---todo-list-manager) - Gestore di task da terminale
-
-- [cryptoclip](#-cryptoclip---clipboard-encryption)
 
 ---
 
@@ -288,39 +285,6 @@ python opass.py seasons "Spring Equinox" flower -t alternate -s k_d_s
 
 ---
 
-## ✅ tasks - Todo List Manager
-
-Gestore di task persistente con supporto per completamento e eliminazione.
-
-### Installazione
-Nessuna dipendenza esterna richiesta (usa solo librerie standard).
-
-### Utilizzo
-```bash
-cd tasks
-
-# Aggiungi task
-python tasks.py add "Finire il progetto"
-python tasks.py add "Comprare il latte"
-
-# Lista tutti i task
-python tasks.py list
-
-# Completa un task (numero dalla lista)
-python tasks.py done 1
-
-# Elimina un task
-python tasks.py delete 2
-```
-
-### Caratteristiche
-- 📝 Task persistenti salvati in `~/.tasks.json`
-- ✅ Segna task come completati
-- 🗑️ Elimina task
-- 📋 Visualizzazione chiara con emoji
-
----
-
 ## 🚀 Setup Rapido
 
 ### Installa tutte le dipendenze
@@ -377,11 +341,9 @@ Ogni tool può avere la propria licenza. Controlla i singoli progetti per dettag
 |------|-------|------------|-----|
 | **clip** | Gestione clipboard | pyperclip | ❌ |
 | **cryptomessage** | Messaggi criptati | cryptography | ✅ |
-| **editor** | Editor testo | windows-curses | ❌ |
+| **dnote** | Developer notebook | @akaoio/zen | ❌ |
 | **foldx** | Organizza cartelle | - | ❌ |
-| **meteocheck** | Meteo | requests | ❌ |
 | **opass** | Password | - | ❌ |
-| **tasks** | Todo list | - | ❌ |
 
 ---
 

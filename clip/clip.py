@@ -99,20 +99,18 @@ def show_help():
     print("  delete <n>     Deletes item n from the history")
     print("  clear          Deletes the entire history")
 
-if __name__ == "__main__":
+def main():
     args = sys.argv
     if len(args) < 2:
         show_help()
     else:
         command = args[1]
         if command == "save":
-            save_content() # Calls the function without arguments
-        # --- NEW COMMAND ---
+            save_content()
         elif command == "put":
             if len(args) > 2:
-                # Join all arguments after 'put' into a single string
                 text_to_save = " ".join(args[2:])
-                save_content(content=text_to_save) # Calls with content
+                save_content(content=text_to_save)
             else:
                 print("❌ You must provide text to save. Ex: 'clip put my new item'.")
         elif command == "list":
@@ -131,3 +129,6 @@ if __name__ == "__main__":
             clear_history()
         else:
             show_help()
+
+if __name__ == "__main__":
+    main()
